@@ -10,6 +10,9 @@ class StringScanner2D {
     required bool Function(String result, String? next) shouldContinue,
   }) {
     var result = '';
+    if (!input.isValidIndex(index)) {
+      return result;
+    }
     var next = input.getAt(index);
 
     while (shouldContinue(result, next)) {

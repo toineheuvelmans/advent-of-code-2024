@@ -2,6 +2,7 @@ import 'package:aoc2024/day1.dart';
 import 'package:aoc2024/day2.dart';
 import 'package:aoc2024/day3.dart';
 import 'package:aoc2024/day4.dart';
+import 'package:aoc2024/day5.dart';
 import 'package:aoc2024/util/parse.dart';
 
 Future<void> main(List<String> arguments) async {
@@ -10,6 +11,7 @@ Future<void> main(List<String> arguments) async {
     () => Day2(),
     () => Day3(),
     () => Day4(),
+    () => Day5(),
   ];
 
   final dayNum = stringToInt(arguments[0]);

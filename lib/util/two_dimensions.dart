@@ -6,6 +6,13 @@ class Index2D {
   @override
   String toString() =>
       '[${row.toString().padLeft(4, '0')}:${column.toString().padLeft(4, '0')}]';
+
+  @override
+  operator ==(Object other) =>
+      other is Index2D && row == other.row && column == other.column;
+
+  @override
+  int get hashCode => row.hashCode ^ column.hashCode;
 }
 
 extension CompareIndex2DExt on Index2D {
@@ -69,6 +76,10 @@ enum Direction2D {
   }
 
   Direction2D get opposite => Direction2D.values[(index + 4) % 8];
+
+  Direction2D turnRight() {
+    return Direction2D.values[(index + 2) % 8];
+  }
 
   (Direction2D left, Direction2D right) get perpendicular {
     switch (this) {

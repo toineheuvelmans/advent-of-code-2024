@@ -1,7 +1,5 @@
 import 'package:aoc2024/day.dart';
-import 'package:aoc2024/util/read_file.dart';
-import 'package:aoc2024/util/scanner.dart';
-import 'package:aoc2024/util/two_dimensions.dart';
+import 'package:aoc2024/util/utils.dart';
 
 class Day4 implements Day {
   @override
@@ -19,7 +17,7 @@ class Day4 implements Day {
           final output = scanner.scanAtIndex(
             Index2D(row: row, column: column),
             nextIndex: (index, step) => direction.mutateIndex(index),
-            shouldContinue: (result, next) =>
+            shouldContinue: (result, _, next) =>
                 next != null && result.length < target.length,
           );
           if (output == target) {
@@ -53,7 +51,7 @@ class Day4 implements Day {
           final output = scanner.scanAtIndex(
             currentIndex,
             nextIndex: (index, step) => direction.mutateIndex(index),
-            shouldContinue: (result, next) =>
+            shouldContinue: (result, _, next) =>
                 next != null &&
                 result.length < target.length &&
                 target.startsWith(result),
@@ -83,7 +81,7 @@ class Day4 implements Day {
                 perpendicularOrigin,
                 nextIndex: (index, step) =>
                     perpendicularDirection.mutateIndex(index),
-                shouldContinue: (result, next) =>
+                shouldContinue: (result, _, next) =>
                     next != null &&
                     result.length < target.length &&
                     target.startsWith(result),

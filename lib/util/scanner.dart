@@ -7,7 +7,8 @@ class StringScanner2D {
   String scanAtIndex(
     Index2D index, {
     required Index2D Function(Index2D index, int step) nextIndex,
-    required bool Function(String result, String? next) shouldContinue,
+    required bool Function(String result, Index2D nextIndex, String? next)
+        shouldContinue,
   }) {
     var result = '';
     if (!input.isValidIndex(index)) {
@@ -15,7 +16,7 @@ class StringScanner2D {
     }
     var next = input.getAt(index);
 
-    while (shouldContinue(result, next)) {
+    while (shouldContinue(result, index, next)) {
       if (next == null) {
         break;
       }

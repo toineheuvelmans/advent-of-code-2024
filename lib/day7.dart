@@ -3,12 +3,16 @@ import 'package:aoc2024/util/utils.dart';
 
 enum Operator {
   add,
-  multiply;
+  multiply,
+  concatenate;
 
   @override
   String toString() => this == add ? '+' : '*';
 
   T apply<T extends num>(T a, T b) {
+    if (this == concatenate) {
+      return int.parse('$a$b') as T;
+    }
     return (this == add ? a + b : a * b) as T;
   }
 }
@@ -18,6 +22,22 @@ typedef OperationSet = ({int outcome, List<int> components});
 class Day7 implements Day {
   @override
   Future<int> part1() async {
+    return findOutcome(supportedOperators: [
+      Operator.add,
+      Operator.multiply,
+    ]);
+  }
+
+  @override
+  Future<int> part2() {
+    return findOutcome(supportedOperators: [
+      Operator.add,
+      Operator.multiply,
+      Operator.concatenate
+    ]);
+  }
+
+  Future<int> findOutcome({required List<Operator> supportedOperators}) async {
     final path = 'inputs/day7.txt';
     final entries = await readFileAsLines(path, (lines) {
       return lines.map((line) {
@@ -34,7 +54,7 @@ class Day7 implements Day {
       final outcome = entry.outcome;
       final components = entry.components;
       final operatorPermutations =
-          permutations(Operator.values, components.length - 1);
+          permutations(supportedOperators, components.length - 1);
 
       for (final operations in operatorPermutations) {
         int result = components[0];
@@ -55,10 +75,5 @@ class Day7 implements Day {
     // Return sum of correct entries outcomes
     return correctEntries.fold<int>(
         0, (previousValue, element) => previousValue + element.outcome);
-  }
-
-  @override
-  Future<int> part2() {
-    throw UnimplementedError();
   }
 }

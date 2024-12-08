@@ -9,4 +9,14 @@ extension ListExt<T> on List<T> {
       yield (l, r);
     }
   }
+
+  List<(T left, T right)> uniquePairs() {
+    final pairs = <(T left, T right)>[];
+    for (var i = 0; i < length; i++) {
+      for (var j = i + 1; j < length; j++) {
+        pairs.add((this[i], this[j]));
+      }
+    }
+    return pairs;
+  }
 }

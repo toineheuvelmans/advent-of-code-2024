@@ -8,7 +8,7 @@ class Index2D {
       '[${row.toString().padLeft(4, '0')}:${column.toString().padLeft(4, '0')}]';
 
   @override
-  operator ==(Object other) =>
+  operator ==(covariant other) =>
       other is Index2D && row == other.row && column == other.column;
 
   @override
@@ -30,6 +30,40 @@ extension ChangeIndex2DExt on Index2D {
     final newIndex = direction.opposite.mutateIndex(this);
     return Index2D(row: newIndex.row, column: newIndex.column);
   }
+}
+
+class Offset2D {
+  Offset2D({required this.deltaRow, required this.deltaColumn});
+  final int deltaRow;
+  final int deltaColumn;
+
+  @override
+  String toString() =>
+      '{${deltaRow.toString().padLeft(2, '0')}:${deltaColumn.toString().padLeft(2, '0')}}';
+
+  @override
+  operator ==(covariant other) =>
+      other is Offset2D &&
+      deltaRow == other.deltaRow &&
+      deltaColumn == other.deltaColumn;
+
+  @override
+  int get hashCode => deltaRow.hashCode ^ deltaColumn.hashCode;
+
+  Offset2D get inverse =>
+      Offset2D(deltaRow: -deltaRow, deltaColumn: -deltaColumn);
+
+  Index2D apply(Index2D index) {
+    return Index2D(
+        row: index.row + deltaRow, column: index.column + deltaColumn);
+  }
+}
+
+extension Index2DOffset2DExt on Index2D {
+  Offset2D operator -(Index2D other) =>
+      Offset2D(deltaRow: row - other.row, deltaColumn: column - other.column);
+
+  Index2D operator +(Offset2D offset) => offset.apply(this);
 }
 
 enum Direction2D {

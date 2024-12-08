@@ -27,4 +27,17 @@ class StringScanner2D {
 
     return result;
   }
+
+  List<Index2D> indicesOf(String char) {
+    final indices = <Index2D>[];
+    for (var i = 0; i < input.length; i++) {
+      final row = input[i];
+      for (var j = 0; j < row.length; j++) {
+        if (row[j] == char) {
+          indices.add(Index2D(row: i, column: j));
+        }
+      }
+    }
+    return indices;
+  }
 }

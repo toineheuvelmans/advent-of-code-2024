@@ -2,21 +2,14 @@ import 'package:aoc2024/day.dart';
 import 'package:aoc2024/util/utils.dart';
 
 class Day6 implements Day {
-  Index2D findStart(List<String> input) {
-    for (var row = 0; row < input.length; row++) {
-      for (var column = 0; column < input[row].length; column++) {
-        if (input[row][column] == '^') {
-          return Index2D(row: row, column: column);
-        }
-      }
-    }
-    throw Exception('No start found');
+  GridIndex findStart(Grid<String> input) {
+    return input.indexed.firstWhere((element) => element.$2 == '^').$1;
   }
 
   @override
   Future<int> part1() async {
     const path = 'inputs/day6.txt';
-    final input = await readFileAsGrid(path);
+    final input = Grid.stringGridFromFile(File(path));
 
     // Find index of ^ in input
     final start = findStart(input);
@@ -24,17 +17,18 @@ class Day6 implements Day {
     return distinctPositions(start, input, 10000000);
   }
 
-  int distinctPositions(Index2D start, List<String> input, int breakLength) {
+  int distinctPositions(GridIndex start, Grid<String> input, int breakLength) {
     final path = watchPath(start, input, breakLength);
     return path.toSet().length;
   }
 
-  List<Index2D> watchPath(Index2D start, List<String> input, int breakLength) {
-    final watchPath = <Index2D>[start];
-    Direction2D currentDirection = Direction2D.north;
+  List<GridIndex> watchPath(
+      GridIndex start, Grid<String> input, int breakLength) {
+    final watchPath = <GridIndex>[start];
+    Direction currentDirection = Direction.north;
     bool isOnGrid = true;
     while (isOnGrid) {
-      final scanner = StringScanner2D(input: input);
+      final scanner = GridScanner.stringScanner(input);
       final currentIndex = watchPath.last;
       // final charAtIndex = input.getAt(currentIndex);
       // print(
@@ -67,7 +61,7 @@ class Day6 implements Day {
   @override
   Future<int> part2() async {
     const path = 'inputs/day6.txt';
-    final input = await readFileAsGrid(path);
+    final input = Grid.stringGridFromFile(File(path));
     const breakLimit = 100000;
     const loopLimit = breakLimit - 10;
 
@@ -77,11 +71,11 @@ class Day6 implements Day {
     // Wherever it exceeds loop limit
     // the watcher is probably in a loop.
 
-    List<Index2D> invalidPositions = [start];
+    List<GridIndex> invalidPositions = [start];
     while (true) {
       final current = invalidPositions.last;
-      final nextIndex = Direction2D.north.mutateIndex(current);
-      final nextChar = input.getAt(nextIndex);
+      final nextIndex = Direction.north.mutateIndex(current);
+      final nextChar = input[nextIndex];
       if (nextChar == null || nextChar == '#') {
         break;
       }
@@ -93,20 +87,21 @@ class Day6 implements Day {
 
     int loopCount = 0;
 
-    for (var row = 0; row < input.length; row++) {
-      for (var column = 0; column < input[row].length; column++) {
-        if (invalidPositions.contains(Index2D(row: row, column: column))) {
-          continue;
-        }
-        final adjustedInput = [...input];
-        adjustedInput[row] =
-            adjustedInput[row].replaceRange(column, column + 1, '#');
+    for (final (index, _) in input.indexed) {
+      if (invalidPositions.contains(index)) {
+        continue;
+      }
+      final adjustedInput = [...input.values];
+      final row = adjustedInput[index.row].join('');
+      row.replaceRange(index.column, index.column + 1, '#');
+      adjustedInput[index.row] = row.split('');
 
-        final positions = watchPath(start, adjustedInput, breakLimit).length;
-        if (positions > loopLimit) {
-          print('[$loopCount] Found loop ($positions) at $row, $column');
-          loopCount++;
-        }
+      final positions =
+          watchPath(start, Grid(adjustedInput), breakLimit).length;
+      if (positions > loopLimit) {
+        print(
+            '[$loopCount] Found loop ($positions) at ${index.row}, ${index.column}');
+        loopCount++;
       }
     }
 

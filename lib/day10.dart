@@ -2,23 +2,16 @@ import 'package:aoc2024/day.dart';
 import 'package:aoc2024/util/utils.dart';
 
 class Day10 implements Day {
-  Future<List<List<int>>> readInput() async {
-    final grid = await readFileAsGrid('inputs/day10.txt');
-    return grid.map((line) => line.split('').map(int.parse).toList()).toList();
-  }
-
   @override
   Future<int> part1() async {
-    final input = await readInput();
+    final input = Grid.intGridFromFile(File('inputs/day10.txt'));
 
-    final trailHeads = <({Index2D position, List<Index2D> tops})>[];
-    for (var row = 0; row < input.length; row++) {
-      for (var column = 0; column < input[row].length; column++) {
-        if (input[row][column] == 0) {
-          final startPosition = Index2D(row: row, column: column);
-          final tops = findTops(startPosition, input);
-          trailHeads.add((position: startPosition, tops: tops));
-        }
+    final trailHeads = <({GridIndex position, List<GridIndex> tops})>[];
+    for (final (index, value) in input.indexed) {
+      if (value == 0) {
+        final startPosition = index;
+        final tops = findTops(startPosition, input);
+        trailHeads.add((position: startPosition, tops: tops));
       }
     }
 
@@ -35,16 +28,14 @@ class Day10 implements Day {
 
   @override
   Future<int> part2() async {
-    final input = await readInput();
+    final input = Grid.intGridFromFile(File('inputs/day10.txt'));
 
-    final trailHeads = <({Index2D position, List<Index2D> tops})>[];
-    for (var row = 0; row < input.length; row++) {
-      for (var column = 0; column < input[row].length; column++) {
-        if (input[row][column] == 0) {
-          final startPosition = Index2D(row: row, column: column);
-          final tops = findTops(startPosition, input);
-          trailHeads.add((position: startPosition, tops: tops));
-        }
+    final trailHeads = <({GridIndex position, List<GridIndex> tops})>[];
+    for (final (index, value) in input.indexed) {
+      if (value == 0) {
+        final startPosition = index;
+        final tops = findTops(startPosition, input);
+        trailHeads.add((position: startPosition, tops: tops));
       }
     }
 
@@ -59,9 +50,9 @@ class Day10 implements Day {
     return ratingSum;
   }
 
-  List<Index2D> findTops(Index2D startPosition, List<List<int>> grid) {
-    final tops = <Index2D>[];
-    final startValue = grid.getAt(startPosition);
+  List<GridIndex> findTops(GridIndex startPosition, Grid<int> grid) {
+    final tops = <GridIndex>[];
+    final startValue = grid[startPosition];
     if (startValue == null) {
       return [];
     }
@@ -70,9 +61,9 @@ class Day10 implements Day {
       return [startPosition];
     }
 
-    for (final direction in Direction2D.nonDiagonal) {
+    for (final direction in Direction.nonDiagonal) {
       final indexInDirection = direction.mutateIndex(startPosition);
-      final valueInDirection = grid.getAt(indexInDirection);
+      final valueInDirection = grid[indexInDirection];
       if (valueInDirection != null && valueInDirection == startValue + 1) {
         tops.addAll(findTops(indexInDirection, grid));
       }

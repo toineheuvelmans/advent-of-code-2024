@@ -2,23 +2,28 @@ import 'package:aoc2024/day.dart';
 import 'package:aoc2024/util/utils.dart';
 
 class Day8 implements Day {
-  Future<List<String>> readInput() {
+  Grid<String> readInput() {
     final path = 'inputs/day8.txt';
-    return readFileAsGrid(path);
+    return Grid.stringGridFromFile(File(path));
   }
 
-  List<String> getFrequencies(List<String> input) {
-    return input.join('').uniqueCharacters().where((c) => c != '.').toList()
+  List<String> getFrequencies(Grid<String> input) {
+    return input.values
+        .map((r) => r.join(''))
+        .join('')
+        .uniqueCharacters()
+        .where((c) => c != '.')
+        .toList()
       ..sort();
   }
 
   @override
   Future<int> part1() async {
-    final input = await readInput();
-    final scanner = StringScanner2D(input: input);
+    final input = readInput();
+    final scanner = GridScanner.stringScanner(input);
 
     final frequencies = getFrequencies(input);
-    final antinodes = <Index2D>{};
+    final antinodes = <GridIndex>{};
 
     for (final frequency in frequencies) {
       print('Looking for antennas for frequency $frequency');
@@ -48,15 +53,15 @@ class Day8 implements Day {
 
   @override
   Future<int> part2() async {
-    final input = await readInput();
-    final scanner = StringScanner2D(input: input);
+    final input = readInput();
+    final scanner = GridScanner.stringScanner(input);
 
     final frequencies = getFrequencies(input);
-    final antinodes = <Index2D>{};
+    final antinodes = <GridIndex>{};
 
-    List<Index2D> antinodeIndices(Index2D antenna, Offset2D offset) {
-      final antennaAtinodes = <Index2D>[];
-      Index2D antinodeIndex = antenna + offset;
+    List<GridIndex> antinodeIndices(GridIndex antenna, GridOffset offset) {
+      final antennaAtinodes = <GridIndex>[];
+      GridIndex antinodeIndex = antenna + offset;
       while (input.isValidIndex(antinodeIndex)) {
         antennaAtinodes.add(antinodeIndex);
         antinodeIndex += offset;

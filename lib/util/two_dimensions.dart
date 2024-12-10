@@ -76,6 +76,13 @@ enum Direction2D {
   west,
   northWest;
 
+  static const nonDiagonal = [
+    Direction2D.north,
+    Direction2D.east,
+    Direction2D.south,
+    Direction2D.west
+  ];
+
   @override
   String toString() => switch (this) {
         north => 'N',
@@ -146,6 +153,22 @@ extension String2DExt on List<String> {
   }
 
   String? getAt(Index2D index) {
+    if (!isValidIndex(index)) {
+      return null;
+    }
+    return this[index.row][index.column];
+  }
+}
+
+extension Int2DExt on List<List<int>> {
+  bool isValidIndex(Index2D index) {
+    return index.row >= 0 &&
+        index.row < length &&
+        index.column >= 0 &&
+        index.column < this[index.row].length;
+  }
+
+  int? getAt(Index2D index) {
     if (!isValidIndex(index)) {
       return null;
     }
